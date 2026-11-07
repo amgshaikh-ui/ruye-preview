@@ -592,6 +592,73 @@ ul{margin:0;padding:0;list-style:none}
 .contact__actions{display:flex;flex-wrap:wrap;gap:1rem;margin-block-start:clamp(2.5rem,5vw,3.5rem)}
 
 /* =========================================================
+   Contact form
+   على خلفية داكنة، فالأسطح من ‎--ink-700‎ والحدود من ‎--ink-600‎.
+   بلا ‎backdrop-filter‎: الزجاجية محصورة في الهيدر وبطاقات الأرقام
+   ودرج الجوال ونافذة المعاينة، والنموذج ليس منها.
+   ========================================================= */
+.contact__grid{
+  display:grid;gap:clamp(2rem,4vw,3rem);align-items:start;
+}
+@media(min-width:960px){
+  .contact__grid{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr)}
+}
+
+.cform{
+  background:var(--ink-700);border:1px solid var(--ink-600);
+  border-radius:var(--r-lg);padding:clamp(1.25rem,3vw,2rem);
+  display:grid;gap:clamp(.9rem,2vw,1.15rem);
+}
+.cform__title{
+  font-weight:500;font-size:var(--fs-lead);color:var(--mint-300);margin:0 0 .25rem;
+}
+.cform__row{display:grid;gap:clamp(.9rem,2vw,1.15rem)}
+@media(min-width:560px){.cform__row{grid-template-columns:1fr 1fr}}
+
+.field{display:grid;gap:.45rem;margin:0}
+.field__label{font-size:var(--fs-small);color:var(--paper-2);opacity:.86}
+.field__input{
+  inline-size:100%;font:inherit;font-size:1rem;color:var(--paper-2);
+  background:rgba(8,18,32,.55);border:1px solid var(--ink-600);
+  border-radius:var(--r-sm);padding:.72rem .9rem;
+  transition:border-color .25s,box-shadow .25s,background-color .25s;
+}
+/* حدّ ملوّن مع هالة: الحدّ وحده لا يكفي لمن يميّز الألوان بصعوبة */
+.field__input:focus-visible{
+  outline:none;border-color:var(--teal-500);
+  box-shadow:0 0 0 3px rgba(47,173,153,.32);background:rgba(8,18,32,.75);
+}
+/* ٠٫٤٦ كانت تعطي ٤٫٢١:١ وهو دون حدّ AA؛ ٠٫٥٨ ترفعه فوقه.
+   النصّ الإرشادي ليس بديلًا عن التسمية، لكن ما دام مقروءًا فليكن مقروءًا للجميع. */
+.field__input::placeholder{color:var(--paper-2);opacity:.58}
+.field__input--area{resize:vertical;min-block-size:7rem;line-height:1.7}
+
+/* السهم مرسوم لا حرفًا، ويتبع جهة القراءة: ‎background-position‎ لا يقبل
+   الخصائص المنطقية، فيُقلب بانتقاء الاتجاه صراحةً. */
+.field__input--select{
+  appearance:none;-webkit-appearance:none;cursor:pointer;
+  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 8" fill="none" stroke="%2390D5BF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1.5 6 6.5 11 1.5"/></svg>');
+  background-repeat:no-repeat;background-size:12px 8px;
+}
+[dir="rtl"] .field__input--select{background-position:left .95rem center;padding-inline-start:2.4rem}
+[dir="ltr"] .field__input--select{background-position:right .95rem center;padding-inline-end:2.4rem}
+.field__input--select option{background:var(--ink-800);color:var(--paper-2)}
+
+.field__input[aria-invalid="true"]{border-color:#F0A08F}
+.field__err{font-size:var(--fs-small);color:#FFC2B4}
+
+/* الفخّ: بعيد عن الشاشة لا ‎display:none‎ — المخفيّ كليًّا لا تملؤه
+   الروبوتات التي تنظر إلى الأنماط، و‎aria-hidden‎ يُبعده عن قارئ الشاشة. */
+.cform__trap{position:absolute;inline-size:1px;block-size:1px;overflow:hidden;
+  clip-path:inset(50%);white-space:nowrap;margin:0}
+
+.cform__send{justify-self:start;margin-block-start:.35rem}
+.cform__send[aria-disabled="true"]{opacity:.6;pointer-events:none}
+.cform__status{margin:0;font-size:var(--fs-small);min-block-size:1.4em}
+.cform__status[data-state="ok"]{color:var(--mint-300)}
+.cform__status[data-state="err"]{color:#FFC2B4}
+
+/* =========================================================
    Footer
    ========================================================= */
 .footer{background:var(--ink-900);color:var(--paper-2);padding-block:2.5rem}
@@ -1065,26 +1132,99 @@ ul{margin:0;padding:0;list-style:none}
     </h2>
     <p class="contact__sub reveal" data-delay="1" data-i18n="contactSub">من فكرة في بالك، إلى حضور يعبّر عنك.</p>
 
-    <div class="contact__details">
-      <div class="reveal">
-        <p class="contact__label" data-i18n="labelEmail">البريد الإلكتروني</p>
-        <a class="contact__value" href="mailto:info@ruye.sa">
-          <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjQzLjUzMjgiIGhlaWdodD0iMzkuOTAyNyIgdmlld0JveD0iMCAwIDQzLjUzMjggMzkuOTAyNyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTQuNTgzOSAxMy4yNTM0TDIxLjc4MDYgMy44NTc4OEwzOC45Nzc0IDEzLjI1MzRDMzkuNTQ2OCAxMy41NjY2IDM5LjkxNjkgMTQuMTkzIDM5LjkxNjkgMTQuODQ3OFYxNy4xMjU2TDIyLjgzNDEgMjYuMDM3MUMyMi4xNzkyIDI2LjM3ODggMjEuMzUzNiAyNi4zNzg4IDIwLjcyNzIgMjYuMDM3MUwzLjYxNTg3IDE3LjA5NzFWMTQuODE5NEMzLjYxNTg3IDE0LjE2NDUgMy45ODYgMTMuNTM4MiA0LjU1NTQzIDEzLjIyNU00MC43MTQxIDEwLjA2NDZMMjIuNjM0OCAwLjIxMzUzNkMyMi4wOTM4IC0wLjA3MTE3ODUgMjEuNDM5IC0wLjA3MTE3ODUgMjAuODk4IDAuMjEzNTM2TDIuODQ3MTQgMTAuMDY0NkMxLjA4MTkxIDExLjAwNDIgMCAxMi44NTQ4IDAgMTQuODQ3OFYzNC40NjQ2QzAgMzcuNDgyNiAyLjQ0ODU0IDM5LjkwMjcgNS40MzgwNCAzOS45MDI3SDM4LjA5NDdDNDEuMDg0MiAzOS45MDI3IDQzLjUzMjggMzcuNDU0MSA0My41MzI4IDM0LjQ2NDZWMTQuODQ3OEM0My41MzI4IDEyLjg1NDggNDIuNDUwOSAxMS4wMzI3IDQwLjY4NTYgMTAuMDY0NiIgZmlsbD0iIzM0QjA5NiIvPgo8L3N2Zz4K" alt="" aria-hidden="true" width="44" height="40">
-          <span dir="ltr">info@ruye.sa</span>
-        </a>
-      </div>
-      <div class="reveal" data-delay="1">
-        <p class="contact__label" data-i18n="labelPhone">الهاتف</p>
-        <a class="contact__value" href="tel:+966545165325">
-          <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjM0LjYyMTQiIGhlaWdodD0iMzQuNDg3OCIgdmlld0JveD0iMCAwIDM0LjYyMTQgMzQuNDg3OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgaWQ9Ikdyb3VwIDEzIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTI2LjY2OTQgMTQuODk5OEMyNy40MzE2IDE0Ljg5OTggMjguMDc2NSAxNC4yODQyIDI4LjA3NjUgMTMuNDkyN1YyLjI5NDIzQzI4LjA3NjUgMS41MzIwMyAyNy40NjA5IDAuODg3MDk3IDI2LjY2OTQgMC44ODcwOTdDMjUuODc3OSAwLjg4NzA5NyAyNS4yNjIzIDEuNTAyNzIgMjUuMjYyMyAyLjI5NDIzVjEzLjQ5MjdDMjUuMjYyMyAxNC4yNTQ5IDI1Ljg3NzkgMTQuODk5OCAyNi42Njk0IDE0Ljg5OThaIiBmaWxsPSIjMzRCMDk2Ii8+CjxwYXRoIGlkPSJWZWN0b3JfMiIgZD0iTTIxLjA0MTIgMTIuMDg1M0MyMS44MDM0IDEyLjA4NTMgMjIuNDQ4MyAxMS40Njk3IDIyLjQ0ODMgMTAuNjc4MlY1LjA3ODk2QzIyLjQ0ODMgNC4zMTY3NiAyMS44MzI3IDMuNjcxODIgMjEuMDQxMiAzLjY3MTgyQzIwLjI0OTcgMy42NzE4MiAxOS42MzQxIDQuMjg3NDQgMTkuNjM0MSA1LjA3ODk2VjEwLjY3ODJDMTkuNjM0MSAxMS40NDA0IDIwLjI0OTcgMTIuMDg1MyAyMS4wNDEyIDEyLjA4NTNaIiBmaWxsPSIjMzRCMDk2Ii8+CjxwYXRoIGlkPSJWZWN0b3JfMyIgZD0iTTMyLjI2ODcgMTAuNzA3NUMzMy4wMzA5IDEwLjcwNzUgMzMuNjc1OCAxMC4wOTE5IDMzLjY3NTggOS4zMDAzNlY2LjUxNTRDMzMuNjc1OCA1Ljc1MzIxIDMzLjA2MDIgNS4xMDgyNyAzMi4yNjg3IDUuMTA4MjdDMzEuNDc3MiA1LjEwODI3IDMwLjg2MTYgNS43MjM4OSAzMC44NjE2IDYuNTE1NFY5LjMwMDM2QzMwLjg2MTYgMTAuMDYyNiAzMS40NzcyIDEwLjcwNzUgMzIuMjY4NyAxMC43MDc1WiIgZmlsbD0iIzM0QjA5NiIvPgo8cGF0aCBpZD0iVmVjdG9yXzQiIGQ9Ik0zNC4xNzQzIDI2Ljk3NzRMMjguNDg3MSAyMS4yOTAyQzI4LjA3NjcgMjAuODc5OCAyNy40NjExIDIwLjc2MjYgMjYuOTYyNyAyMC45OTcxTDIwLjk1MzEgMjMuNTE4MkwxMS4wMTUyIDEzLjYwOTZMMTMuNTM2MyA3LjYyOTMxQzEzLjc0MTUgNy4xMDE2MyAxMy42NTM2IDYuNDg2MDEgMTMuMjQzMiA2LjEwNDkxTDcuNTU2MDEgMC40MTc3NDNDNi45OTkwMiAtMC4xMzkyNDggNi4xMTk1NiAtMC4xMzkyNDggNS41NjI1NyAwLjQxNzc0M0wxLjY2MzYzIDQuMjg3MzZDLTIuNzkyMjkgOC43NDMyOSAyLjI3OTI2IDE2Ljc3NTcgMTAuMDQ3OCAyNC40ODU2QzE3Ljc4NzEgMzIuMTk1NSAyNS44NDg4IDM3LjI2NzEgMzAuMzA0NyAzMi44NDA1TDM0LjIwMzYgMjguOTcwOEMzNC43NjA2IDI4LjQxMzkgMzQuNzYwNiAyNy41MzQ0IDM0LjIwMzYgMjYuOTc3NEgzNC4xNzQzWiIgZmlsbD0iIzM0QjA5NiIvPgo8L2c+Cjwvc3ZnPgo=" alt="" aria-hidden="true" width="35" height="34">
-          <span dir="ltr">0545165325</span>
-        </a>
-      </div>
-    </div>
+    <div class="contact__grid">
+      <div class="contact__side">
+        <div class="contact__details">
+          <div class="reveal">
+            <p class="contact__label" data-i18n="labelEmail">البريد الإلكتروني</p>
+            <a class="contact__value" href="mailto:info@ruye.sa">
+              <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjQzLjUzMjgiIGhlaWdodD0iMzkuOTAyNyIgdmlld0JveD0iMCAwIDQzLjUzMjggMzkuOTAyNyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTQuNTgzOSAxMy4yNTM0TDIxLjc4MDYgMy44NTc4OEwzOC45Nzc0IDEzLjI1MzRDMzkuNTQ2OCAxMy41NjY2IDM5LjkxNjkgMTQuMTkzIDM5LjkxNjkgMTQuODQ3OFYxNy4xMjU2TDIyLjgzNDEgMjYuMDM3MUMyMi4xNzkyIDI2LjM3ODggMjEuMzUzNiAyNi4zNzg4IDIwLjcyNzIgMjYuMDM3MUwzLjYxNTg3IDE3LjA5NzFWMTQuODE5NEMzLjYxNTg3IDE0LjE2NDUgMy45ODYgMTMuNTM4MiA0LjU1NTQzIDEzLjIyNU00MC43MTQxIDEwLjA2NDZMMjIuNjM0OCAwLjIxMzUzNkMyMi4wOTM4IC0wLjA3MTE3ODUgMjEuNDM5IC0wLjA3MTE3ODUgMjAuODk4IDAuMjEzNTM2TDIuODQ3MTQgMTAuMDY0NkMxLjA4MTkxIDExLjAwNDIgMCAxMi44NTQ4IDAgMTQuODQ3OFYzNC40NjQ2QzAgMzcuNDgyNiAyLjQ0ODU0IDM5LjkwMjcgNS40MzgwNCAzOS45MDI3SDM4LjA5NDdDNDEuMDg0MiAzOS45MDI3IDQzLjUzMjggMzcuNDU0MSA0My41MzI4IDM0LjQ2NDZWMTQuODQ3OEM0My41MzI4IDEyLjg1NDggNDIuNDUwOSAxMS4wMzI3IDQwLjY4NTYgMTAuMDY0NiIgZmlsbD0iIzM0QjA5NiIvPgo8L3N2Zz4K" alt="" aria-hidden="true" width="44" height="40">
+              <span dir="ltr">info@ruye.sa</span>
+            </a>
+          </div>
+          <div class="reveal" data-delay="1">
+            <p class="contact__label" data-i18n="labelPhone">الهاتف</p>
+            <a class="contact__value" href="tel:+966545165325">
+              <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjM0LjYyMTQiIGhlaWdodD0iMzQuNDg3OCIgdmlld0JveD0iMCAwIDM0LjYyMTQgMzQuNDg3OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgaWQ9Ikdyb3VwIDEzIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTI2LjY2OTQgMTQuODk5OEMyNy40MzE2IDE0Ljg5OTggMjguMDc2NSAxNC4yODQyIDI4LjA3NjUgMTMuNDkyN1YyLjI5NDIzQzI4LjA3NjUgMS41MzIwMyAyNy40NjA5IDAuODg3MDk3IDI2LjY2OTQgMC44ODcwOTdDMjUuODc3OSAwLjg4NzA5NyAyNS4yNjIzIDEuNTAyNzIgMjUuMjYyMyAyLjI5NDIzVjEzLjQ5MjdDMjUuMjYyMyAxNC4yNTQ5IDI1Ljg3NzkgMTQuODk5OCAyNi42Njk0IDE0Ljg5OThaIiBmaWxsPSIjMzRCMDk2Ii8+CjxwYXRoIGlkPSJWZWN0b3JfMiIgZD0iTTIxLjA0MTIgMTIuMDg1M0MyMS44MDM0IDEyLjA4NTMgMjIuNDQ4MyAxMS40Njk3IDIyLjQ0ODMgMTAuNjc4MlY1LjA3ODk2QzIyLjQ0ODMgNC4zMTY3NiAyMS44MzI3IDMuNjcxODIgMjEuMDQxMiAzLjY3MTgyQzIwLjI0OTcgMy42NzE4MiAxOS42MzQxIDQuMjg3NDQgMTkuNjM0MSA1LjA3ODk2VjEwLjY3ODJDMTkuNjM0MSAxMS40NDA0IDIwLjI0OTcgMTIuMDg1MyAyMS4wNDEyIDEyLjA4NTNaIiBmaWxsPSIjMzRCMDk2Ii8+CjxwYXRoIGlkPSJWZWN0b3JfMyIgZD0iTTMyLjI2ODcgMTAuNzA3NUMzMy4wMzA5IDEwLjcwNzUgMzMuNjc1OCAxMC4wOTE5IDMzLjY3NTggOS4zMDAzNlY2LjUxNTRDMzMuNjc1OCA1Ljc1MzIxIDMzLjA2MDIgNS4xMDgyNyAzMi4yNjg3IDUuMTA4MjdDMzEuNDc3MiA1LjEwODI3IDMwLjg2MTYgNS43MjM4OSAzMC44NjE2IDYuNTE1NFY5LjMwMDM2QzMwLjg2MTYgMTAuMDYyNiAzMS40NzcyIDEwLjcwNzUgMzIuMjY4NyAxMC43MDc1WiIgZmlsbD0iIzM0QjA5NiIvPgo8cGF0aCBpZD0iVmVjdG9yXzQiIGQ9Ik0zNC4xNzQzIDI2Ljk3NzRMMjguNDg3MSAyMS4yOTAyQzI4LjA3NjcgMjAuODc5OCAyNy40NjExIDIwLjc2MjYgMjYuOTYyNyAyMC45OTcxTDIwLjk1MzEgMjMuNTE4MkwxMS4wMTUyIDEzLjYwOTZMMTMuNTM2MyA3LjYyOTMxQzEzLjc0MTUgNy4xMDE2MyAxMy42NTM2IDYuNDg2MDEgMTMuMjQzMiA2LjEwNDkxTDcuNTU2MDEgMC40MTc3NDNDNi45OTkwMiAtMC4xMzkyNDggNi4xMTk1NiAtMC4xMzkyNDggNS41NjI1NyAwLjQxNzc0M0wxLjY2MzYzIDQuMjg3MzZDLTIuNzkyMjkgOC43NDMyOSAyLjI3OTI2IDE2Ljc3NTcgMTAuMDQ3OCAyNC40ODU2QzE3Ljc4NzEgMzIuMTk1NSAyNS44NDg4IDM3LjI2NzEgMzAuMzA0NyAzMi44NDA1TDM0LjIwMzYgMjguOTcwOEMzNC43NjA2IDI4LjQxMzkgMzQuNzYwNiAyNy41MzQ0IDM0LjIwMzYgMjYuOTc3NEgzNC4xNzQzWiIgZmlsbD0iIzM0QjA5NiIvPgo8L2c+Cjwvc3ZnPgo=" alt="" aria-hidden="true" width="35" height="34">
+              <span dir="ltr">0545165325</span>
+            </a>
+          </div>
+        </div>
 
-    <div class="contact__actions reveal" data-delay="2">
-      <a class="btn btn--primary" href="https://wa.me/966545165325" target="_blank" rel="noopener" data-i18n="ctaWhatsapp">راسلنا على واتس آب</a>
-      <a class="btn btn--ghost" href="mailto:info@ruye.sa" data-i18n="ctaEmail">أرسل بريدًا</a>
+        <div class="contact__actions reveal" data-delay="2">
+          <a class="btn btn--primary" href="https://wa.me/966545165325" target="_blank" rel="noopener" data-i18n="ctaWhatsapp">راسلنا على واتس آب</a>
+          <a class="btn btn--ghost" href="mailto:info@ruye.sa" data-i18n="ctaEmail">أرسل بريدًا</a>
+        </div>
+      </div>
+
+      <!-- النموذج يكمّل الواتساب والبريد ولا يحلّ محلّهما: هو الطريق الذي
+           يصل منظّمًا — اسمٌ وبريدٌ وخدمةٌ محدّدة — بدل رسالة مفتوحة.
+           novalidate لأن التحقّق بالجافاسكربت ليُكتب الخطأ بالعربية ويُربط
+           بالحقل عبر aria-describedby، ورسائل المتصفّح لا تُترجَم ولا تُنسَّق. -->
+      <form class="cform reveal" id="contactForm" data-delay="1" novalidate>
+        <p class="cform__title" data-i18n="formTitle">أو احكِ لنا عن مشروعك</p>
+
+        <div class="cform__row">
+          <p class="field">
+            <label class="field__label" for="f-name" data-i18n="fName">الاسم</label>
+            <input class="field__input" id="f-name" name="name" type="text" autocomplete="name"
+                   required aria-describedby="e-name"
+                   data-i18n-placeholder="fNamePh" placeholder="اسمك الكامل">
+            <span class="field__err" id="e-name" hidden></span>
+          </p>
+          <p class="field">
+            <label class="field__label" for="f-email" data-i18n="fEmail">البريد الإلكتروني</label>
+            <input class="field__input" id="f-email" name="email" type="email" autocomplete="email"
+                   dir="ltr" required aria-describedby="e-email"
+                   data-i18n-placeholder="fEmailPh" placeholder="name@example.com">
+            <span class="field__err" id="e-email" hidden></span>
+          </p>
+        </div>
+
+        <div class="cform__row">
+          <p class="field">
+            <label class="field__label" for="f-phone" data-i18n="fPhone">الجوال — اختياري</label>
+            <input class="field__input" id="f-phone" name="phone" type="tel" dir="ltr"
+                   inputmode="tel" autocomplete="tel"
+                   data-i18n-placeholder="fPhonePh" placeholder="05XXXXXXXX">
+          </p>
+          <p class="field">
+            <label class="field__label" for="f-service" data-i18n="fService">الخدمة المطلوبة</label>
+            <select class="field__input field__input--select" id="f-service" name="service">
+              <option value="" data-i18n="fServiceAny">لم أحدّد بعد</option>
+              <option data-i18n="svc1Title">الهوية البصرية والتصميم الإبداعي</option>
+              <option data-i18n="svc2Title">التسويق الرقمي واستراتيجيات التسويق</option>
+              <option data-i18n="svc3Title">إدارة المحتوى ومنصات التواصل الاجتماعي</option>
+              <option data-i18n="svc4Title">الحلول التقنية وتطوير المنصات الرقمية</option>
+              <option data-i18n="svc5Title">التصوير والإنتاج الإعلامي</option>
+              <option data-i18n="svc6Title">تنظيم الفعاليات والتغطيات الإعلامية</option>
+            </select>
+          </p>
+        </div>
+
+        <p class="field">
+          <label class="field__label" for="f-msg" data-i18n="fMessage">تفاصيل المشروع</label>
+          <textarea class="field__input field__input--area" id="f-msg" name="message" rows="4"
+                    required aria-describedby="e-msg"
+                    data-i18n-placeholder="fMessagePh" placeholder="ما الذي تريد إنجازه؟ وما المدّة التي تفكّر فيها؟"></textarea>
+          <span class="field__err" id="e-msg" hidden></span>
+        </p>
+
+        <!-- فخّ للروبوتات: حقل مخفيّ عن العين وعن قارئ الشاشة وعن مفتاح Tab.
+             لا يملؤه إنسان قطّ، فإن جاء ممتلئًا فالمرسِل آلة وتُهمَل الرسالة. -->
+        <p class="cform__trap" aria-hidden="true">
+          <label for="f-company">Company</label>
+          <input id="f-company" name="company" type="text" tabindex="-1" autocomplete="off">
+        </p>
+
+        <button class="btn btn--primary cform__send" type="submit">
+          <span data-i18n="fSend">أرسل الطلب</span> <span class="btn__arrow" aria-hidden="true">←</span>
+        </button>
+
+        <!-- role=status مع aria-live: قارئ الشاشة ينطق النتيجة دون أن يُنقل
+             إليه التركيز، فلا يفقد المستخدم موضعه في النموذج. -->
+        <p class="cform__status" id="formStatus" role="status" aria-live="polite"></p>
+      </form>
     </div>
   </div>
 </section>
@@ -1221,6 +1361,22 @@ ul{margin:0;padding:0;list-style:none}
       contactSub: 'من فكرة في بالك، إلى حضور يعبّر عنك.',
       labelEmail: 'البريد الإلكتروني', labelPhone: 'الهاتف',
       ctaWhatsapp: 'راسلنا على واتس آب', ctaEmail: 'أرسل بريدًا',
+
+      formTitle: 'أو احكِ لنا عن مشروعك',
+      fName: 'الاسم', fNamePh: 'اسمك الكامل',
+      fEmail: 'البريد الإلكتروني', fEmailPh: 'name@example.com',
+      fPhone: 'الجوال — اختياري', fPhonePh: '05XXXXXXXX',
+      fService: 'الخدمة المطلوبة', fServiceAny: 'لم أحدّد بعد',
+      fMessage: 'تفاصيل المشروع',
+      fMessagePh: 'ما الذي تريد إنجازه؟ وما المدّة التي تفكّر فيها؟',
+      fSend: 'أرسل الطلب',
+      errName: 'اكتب اسمك من فضلك',
+      errEmail: 'اكتب بريدًا إلكترونيًّا صحيحًا',
+      errMessage: 'اكتب لنا شيئًا عن مشروعك',
+      fSending: 'جارٍ الإرسال…',
+      fOk: 'وصلتنا رسالتك، ونردّ عليك خلال يوم عمل.',
+      fErrSend: 'تعذّر الإرسال. راسلنا على واتساب أو على info@ruye.sa',
+      fMailOpened: 'فتحنا برنامج البريد عندك برسالة معبّأة — أرسلها من هناك.',
       footerNote: 'رؤى لخدمات الأعمال &nbsp;/&nbsp; RUYE — جميع الحقوق محفوظة © <span id="year">2026</span>',
 
       lbTitle: 'معاينة العمل', lbClose: 'إغلاق المعاينة'
@@ -1316,6 +1472,22 @@ ul{margin:0;padding:0;list-style:none}
       contactSub: 'From an idea in your head, to a presence that speaks for you.',
       labelEmail: 'Email', labelPhone: 'Phone',
       ctaWhatsapp: 'Message us on WhatsApp', ctaEmail: 'Send an email',
+
+      formTitle: 'Or tell us about your project',
+      fName: 'Name', fNamePh: 'Your full name',
+      fEmail: 'Email', fEmailPh: 'name@example.com',
+      fPhone: 'Phone — optional', fPhonePh: '05XXXXXXXX',
+      fService: 'Service needed', fServiceAny: 'Not sure yet',
+      fMessage: 'Project details',
+      fMessagePh: 'What are you trying to achieve, and on what timeline?',
+      fSend: 'Send request',
+      errName: 'Please enter your name',
+      errEmail: 'Please enter a valid email address',
+      errMessage: 'Tell us a little about your project',
+      fSending: 'Sending…',
+      fOk: 'Got it — we reply within one business day.',
+      fErrSend: 'That did not send. Reach us on WhatsApp or at info@ruye.sa',
+      fMailOpened: 'We opened your mail app with the message filled in — send it from there.',
       footerNote: 'Ruye Business Services &nbsp;/&nbsp; RUYE — All rights reserved © <span id="year">2026</span>',
 
       lbTitle: 'Work preview', lbClose: 'Close preview'
@@ -1356,6 +1528,10 @@ ul{margin:0;padding:0;list-style:none}
     document.querySelectorAll('[data-i18n-alt]').forEach(function (el) {
       var v = t(el.getAttribute('data-i18n-alt'));
       if (v !== null) el.setAttribute('alt', v);
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(function (el) {
+      var v = t(el.getAttribute('data-i18n-placeholder'));
+      if (v !== null) el.setAttribute('placeholder', v);
     });
 
     // سهم الأزرار يتبع اتجاه القراءة
@@ -1604,7 +1780,146 @@ ul{margin:0;padding:0;list-style:none}
     if (e.key === 'Escape' && lightbox.classList.contains('is-open')) closeLightbox();
   });
 
-  /* ---------- 7) سنة الحقوق ---------- */
+  /* ---------- 7) نموذج التواصل ---------- */
+  // وجهة الإرسال. ما دامت فارغة، يفتح النموذج برنامج البريد عند الزائر
+  // برسالة معبّأة — يعمل بلا خادم وبلا اشتراك، لكنه يتطلّب منه ضغطة أخيرة.
+  // وبوضع رابط خدمة إرسال ومفتاحها هنا (Web3Forms أو ما شابهها) تصل
+  // الرسالة إلى info@ruye.sa دون أن يغادر الزائر الصفحة. هذان السطران
+  // هما كل ما يلزم للانتقال من الحالة الأولى إلى الثانية.
+  var FORM_ENDPOINT = '';
+  var FORM_KEY = '';
+  var MAIL_TO = 'info@ruye.sa';
+
+  var form = document.getElementById('contactForm');
+
+  if (form) {
+    var statusEl = document.getElementById('formStatus');
+    var sendBtn = form.querySelector('.cform__send');
+    var T = function (key, fallback) {
+      return (window.RuyeI18n && window.RuyeI18n.t(key)) || fallback;
+    };
+
+    var fields = [
+      { el: document.getElementById('f-name'), err: 'e-name', key: 'errName',
+        fb: 'اكتب اسمك من فضلك',
+        ok: function (v) { return v.length > 1; } },
+      { el: document.getElementById('f-email'), err: 'e-email', key: 'errEmail',
+        fb: 'اكتب بريدًا إلكترونيًّا صحيحًا',
+        // تحقّق متساهل عن قصد: الغرض منع الخطأ المطبعي لا الحكم على صحّة
+        // العنوان، والقاعدة الصارمة ترفض عناوين سليمة أكثر ممّا تصطاد
+        ok: function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v); } },
+      { el: document.getElementById('f-msg'), err: 'e-msg', key: 'errMessage',
+        fb: 'اكتب لنا شيئًا عن مشروعك',
+        ok: function (v) { return v.length > 4; } }
+    ];
+
+    var paint = function (f, bad) {
+      var box = document.getElementById(f.err);
+      if (bad) {
+        f.el.setAttribute('aria-invalid', 'true');
+        box.textContent = T(f.key, f.fb);
+        box.hidden = false;
+        box.__key = f.key; box.__fb = f.fb;
+      } else {
+        f.el.removeAttribute('aria-invalid');
+        box.textContent = ''; box.hidden = true; box.__key = null;
+      }
+    };
+
+    var say = function (key, fallback, state) {
+      statusEl.textContent = key ? T(key, fallback) : '';
+      statusEl.__key = key; statusEl.__fb = fallback;
+      if (state) statusEl.setAttribute('data-state', state);
+      else statusEl.removeAttribute('data-state');
+    };
+
+    // الخطأ يختفي بمجرّد التصحيح، لا عند الإرسال التالي
+    fields.forEach(function (f) {
+      f.el.addEventListener('input', function () {
+        if (f.el.getAttribute('aria-invalid') === 'true' && f.ok(f.el.value.trim())) paint(f, false);
+      });
+    });
+
+    var mailtoFallback = function (data) {
+      var lines = [
+        'الاسم: ' + data.name,
+        'البريد: ' + data.email,
+        data.phone ? 'الجوال: ' + data.phone : '',
+        data.service ? 'الخدمة: ' + data.service : '',
+        '',
+        data.message
+      ].filter(Boolean).join('\n');
+      window.location.href = 'mailto:' + MAIL_TO +
+        '?subject=' + encodeURIComponent('طلب من الموقع — ' + data.name) +
+        '&body=' + encodeURIComponent(lines);
+      say('fMailOpened', 'فتحنا برنامج البريد عندك برسالة معبّأة — أرسلها من هناك.', 'ok');
+    };
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      // الفخّ ممتلئ = روبوت. نُظهر نجاحًا ولا نرسل شيئًا: إخباره بأنه
+      // كُشف يعلّمه كيف يتفادى الفخّ في المرّة القادمة.
+      if (form.querySelector('#f-company').value) {
+        say('fOk', 'وصلتنا رسالتك، ونردّ عليك خلال يوم عمل.', 'ok');
+        form.reset();
+        return;
+      }
+
+      var firstBad = null;
+      fields.forEach(function (f) {
+        var bad = !f.ok(f.el.value.trim());
+        paint(f, bad);
+        if (bad && !firstBad) firstBad = f.el;
+      });
+      if (firstBad) { say(null, ''); firstBad.focus(); return; }
+
+      var sel = document.getElementById('f-service');
+      var data = {
+        name: document.getElementById('f-name').value.trim(),
+        email: document.getElementById('f-email').value.trim(),
+        phone: document.getElementById('f-phone').value.trim(),
+        service: sel.selectedIndex > 0 ? sel.options[sel.selectedIndex].textContent.trim() : '',
+        message: document.getElementById('f-msg').value.trim()
+      };
+
+      if (!FORM_ENDPOINT) { mailtoFallback(data); return; }
+
+      say('fSending', 'جارٍ الإرسال…');
+      sendBtn.setAttribute('aria-disabled', 'true');
+
+      var payload = {
+        access_key: FORM_KEY,
+        subject: 'طلب من موقع رؤى — ' + data.name,
+        name: data.name, email: data.email,
+        phone: data.phone, service: data.service, message: data.message
+      };
+
+      fetch(FORM_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(payload)
+      }).then(function (r) {
+        if (!r.ok) throw new Error(String(r.status));
+        say('fOk', 'وصلتنا رسالتك، ونردّ عليك خلال يوم عمل.', 'ok');
+        form.reset();
+      }).catch(function () {
+        say('fErrSend', 'تعذّر الإرسال. راسلنا على واتساب أو على info@ruye.sa', 'err');
+      }).then(function () {
+        sendBtn.removeAttribute('aria-disabled');
+      });
+    });
+
+    // عند تبديل اللغة تُعاد كتابة ما هو ظاهر من أخطاء وحالة
+    document.addEventListener('ruye:lang', function () {
+      document.querySelectorAll('.field__err').forEach(function (box) {
+        if (box.__key && !box.hidden) box.textContent = T(box.__key, box.__fb);
+      });
+      if (statusEl.__key) statusEl.textContent = T(statusEl.__key, statusEl.__fb);
+    });
+  }
+
+  /* ---------- 8) سنة الحقوق ---------- */
   var year = document.getElementById('year');
   if (year) year.textContent = new Date().getFullYear();
 })();

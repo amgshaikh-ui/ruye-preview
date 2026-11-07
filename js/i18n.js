@@ -110,6 +110,23 @@
       contactSub: 'من فكرة في بالك، إلى حضور يعبّر عنك.',
       labelEmail: 'البريد الإلكتروني', labelPhone: 'الهاتف',
       ctaWhatsapp: 'راسلنا على واتس آب', ctaEmail: 'أرسل بريدًا',
+
+      formTitle: 'أو احكِ لنا عن مشروعك',
+      fName: 'الاسم', fNamePh: 'اسمك الكامل',
+      fEmail: 'البريد الإلكتروني', fEmailPh: 'name@example.com',
+      fPhone: 'الجوال — اختياري', fPhonePh: '05XXXXXXXX',
+      fService: 'الخدمة المطلوبة', fServiceAny: 'لم أحدّد بعد',
+      fMessage: 'تفاصيل المشروع',
+      fMessagePh: 'ما الذي تريد إنجازه؟ وما المدّة التي تفكّر فيها؟',
+      fSend: 'أرسل الطلب',
+      fMailHint: 'يفتح الزرّ برنامج البريد عندك برسالة معبّأة، فترسلها من هناك.',
+      errName: 'اكتب اسمك من فضلك',
+      errEmail: 'اكتب بريدًا إلكترونيًّا صحيحًا',
+      errMessage: 'اكتب لنا شيئًا عن مشروعك',
+      fSending: 'جارٍ الإرسال…',
+      fOk: 'وصلتنا رسالتك، ونردّ عليك خلال يوم عمل.',
+      fErrSend: 'تعذّر الإرسال. راسلنا على واتساب أو على info@ruye.sa',
+      fMailOpened: 'فتحنا برنامج البريد برسالة معبّأة. وإن لم يفتح شيء، راسلنا على info@ruye.sa أو على واتساب.',
       footerNote: 'رؤى لخدمات الأعمال &nbsp;/&nbsp; RUYE — جميع الحقوق محفوظة © <span id="year">2026</span>',
 
       lbTitle: 'معاينة العمل', lbClose: 'إغلاق المعاينة'
@@ -205,6 +222,23 @@
       contactSub: 'From an idea in your head, to a presence that speaks for you.',
       labelEmail: 'Email', labelPhone: 'Phone',
       ctaWhatsapp: 'Message us on WhatsApp', ctaEmail: 'Send an email',
+
+      formTitle: 'Or tell us about your project',
+      fName: 'Name', fNamePh: 'Your full name',
+      fEmail: 'Email', fEmailPh: 'name@example.com',
+      fPhone: 'Phone — optional', fPhonePh: '05XXXXXXXX',
+      fService: 'Service needed', fServiceAny: 'Not sure yet',
+      fMessage: 'Project details',
+      fMessagePh: 'What are you trying to achieve, and on what timeline?',
+      fSend: 'Send request',
+      fMailHint: 'This opens your mail app with the message filled in — send it from there.',
+      errName: 'Please enter your name',
+      errEmail: 'Please enter a valid email address',
+      errMessage: 'Tell us a little about your project',
+      fSending: 'Sending…',
+      fOk: 'Got it — we reply within one business day.',
+      fErrSend: 'That did not send. Reach us on WhatsApp or at info@ruye.sa',
+      fMailOpened: 'Your mail app should open with the message filled in. If nothing opened, write to info@ruye.sa or message us on WhatsApp.',
       footerNote: 'Ruye Business Services &nbsp;/&nbsp; RUYE — All rights reserved © <span id="year">2026</span>',
 
       lbTitle: 'Work preview', lbClose: 'Close preview'
@@ -245,6 +279,10 @@
     document.querySelectorAll('[data-i18n-alt]').forEach(function (el) {
       var v = t(el.getAttribute('data-i18n-alt'));
       if (v !== null) el.setAttribute('alt', v);
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(function (el) {
+      var v = t(el.getAttribute('data-i18n-placeholder'));
+      if (v !== null) el.setAttribute('placeholder', v);
     });
 
     // سهم الأزرار يتبع اتجاه القراءة

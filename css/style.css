@@ -469,6 +469,74 @@ ul{margin:0;padding:0;list-style:none}
 .contact__actions{display:flex;flex-wrap:wrap;gap:1rem;margin-block-start:clamp(2.5rem,5vw,3.5rem)}
 
 /* =========================================================
+   Contact form
+   على خلفية داكنة، فالأسطح من ‎--ink-700‎ والحدود من ‎--ink-600‎.
+   بلا ‎backdrop-filter‎: الزجاجية محصورة في الهيدر وبطاقات الأرقام
+   ودرج الجوال ونافذة المعاينة، والنموذج ليس منها.
+   ========================================================= */
+.contact__grid{
+  display:grid;gap:clamp(2rem,4vw,3rem);align-items:start;
+}
+@media(min-width:960px){
+  .contact__grid{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr)}
+}
+
+.cform{
+  background:var(--ink-700);border:1px solid var(--ink-600);
+  border-radius:var(--r-lg);padding:clamp(1.25rem,3vw,2rem);
+  display:grid;gap:clamp(.9rem,2vw,1.15rem);
+}
+.cform__title{
+  font-weight:500;font-size:var(--fs-lead);color:var(--mint-300);margin:0 0 .25rem;
+}
+.cform__row{display:grid;gap:clamp(.9rem,2vw,1.15rem)}
+@media(min-width:560px){.cform__row{grid-template-columns:1fr 1fr}}
+
+.field{display:grid;gap:.45rem;margin:0}
+.field__label{font-size:var(--fs-small);color:var(--paper-2);opacity:.86}
+.field__input{
+  inline-size:100%;font:inherit;font-size:1rem;color:var(--paper-2);
+  background:rgba(8,18,32,.55);border:1px solid var(--ink-600);
+  border-radius:var(--r-sm);padding:.72rem .9rem;
+  transition:border-color .25s,box-shadow .25s,background-color .25s;
+}
+/* حدّ ملوّن مع هالة: الحدّ وحده لا يكفي لمن يميّز الألوان بصعوبة */
+.field__input:focus-visible{
+  outline:none;border-color:var(--teal-500);
+  box-shadow:0 0 0 3px rgba(47,173,153,.32);background:rgba(8,18,32,.75);
+}
+/* ٠٫٤٦ كانت تعطي ٤٫٢١:١ وهو دون حدّ AA؛ ٠٫٥٨ ترفعه فوقه.
+   النصّ الإرشادي ليس بديلًا عن التسمية، لكن ما دام مقروءًا فليكن مقروءًا للجميع. */
+.field__input::placeholder{color:var(--paper-2);opacity:.58}
+.field__input--area{resize:vertical;min-block-size:7rem;line-height:1.7}
+
+/* السهم مرسوم لا حرفًا، ويتبع جهة القراءة: ‎background-position‎ لا يقبل
+   الخصائص المنطقية، فيُقلب بانتقاء الاتجاه صراحةً. */
+.field__input--select{
+  appearance:none;-webkit-appearance:none;cursor:pointer;
+  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 8" fill="none" stroke="%2390D5BF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1.5 6 6.5 11 1.5"/></svg>');
+  background-repeat:no-repeat;background-size:12px 8px;
+}
+[dir="rtl"] .field__input--select{background-position:left .95rem center;padding-inline-start:2.4rem}
+[dir="ltr"] .field__input--select{background-position:right .95rem center;padding-inline-end:2.4rem}
+.field__input--select option{background:var(--ink-800);color:var(--paper-2)}
+
+.field__input[aria-invalid="true"]{border-color:#F0A08F}
+.field__err{font-size:var(--fs-small);color:#FFC2B4}
+
+/* الفخّ: بعيد عن الشاشة لا ‎display:none‎ — المخفيّ كليًّا لا تملؤه
+   الروبوتات التي تنظر إلى الأنماط، و‎aria-hidden‎ يُبعده عن قارئ الشاشة. */
+.cform__trap{position:absolute;inline-size:1px;block-size:1px;overflow:hidden;
+  clip-path:inset(50%);white-space:nowrap;margin:0}
+
+.cform__hint{margin:.35rem 0 0;font-size:var(--fs-small);color:var(--paper-2);opacity:.72}
+.cform__send{justify-self:start;margin-block-start:.1rem}
+.cform__send[aria-disabled="true"]{opacity:.6;pointer-events:none}
+.cform__status{margin:0;font-size:var(--fs-small);min-block-size:1.4em}
+.cform__status[data-state="ok"]{color:var(--mint-300)}
+.cform__status[data-state="err"]{color:#FFC2B4}
+
+/* =========================================================
    Footer
    ========================================================= */
 .footer{background:var(--ink-900);color:var(--paper-2);padding-block:2.5rem}

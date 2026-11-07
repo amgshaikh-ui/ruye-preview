@@ -195,7 +195,146 @@
     if (e.key === 'Escape' && lightbox.classList.contains('is-open')) closeLightbox();
   });
 
-  /* ---------- 7) سنة الحقوق ---------- */
+  /* ---------- 7) نموذج التواصل ---------- */
+  // وجهة الإرسال. ما دامت فارغة، يفتح النموذج برنامج البريد عند الزائر
+  // برسالة معبّأة — يعمل بلا خادم وبلا اشتراك، لكنه يتطلّب منه ضغطة أخيرة.
+  // وبوضع رابط خدمة إرسال ومفتاحها هنا (Web3Forms أو ما شابهها) تصل
+  // الرسالة إلى info@ruye.sa دون أن يغادر الزائر الصفحة. هذان السطران
+  // هما كل ما يلزم للانتقال من الحالة الأولى إلى الثانية.
+  var FORM_ENDPOINT = '';
+  var FORM_KEY = '';
+  var MAIL_TO = 'info@ruye.sa';
+
+  var form = document.getElementById('contactForm');
+
+  if (form) {
+    var statusEl = document.getElementById('formStatus');
+    var sendBtn = form.querySelector('.cform__send');
+    var T = function (key, fallback) {
+      return (window.RuyeI18n && window.RuyeI18n.t(key)) || fallback;
+    };
+
+    var fields = [
+      { el: document.getElementById('f-name'), err: 'e-name', key: 'errName',
+        fb: 'اكتب اسمك من فضلك',
+        ok: function (v) { return v.length > 1; } },
+      { el: document.getElementById('f-email'), err: 'e-email', key: 'errEmail',
+        fb: 'اكتب بريدًا إلكترونيًّا صحيحًا',
+        // تحقّق متساهل عن قصد: الغرض منع الخطأ المطبعي لا الحكم على صحّة
+        // العنوان، والقاعدة الصارمة ترفض عناوين سليمة أكثر ممّا تصطاد
+        ok: function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v); } },
+      { el: document.getElementById('f-msg'), err: 'e-msg', key: 'errMessage',
+        fb: 'اكتب لنا شيئًا عن مشروعك',
+        ok: function (v) { return v.length > 4; } }
+    ];
+
+    var paint = function (f, bad) {
+      var box = document.getElementById(f.err);
+      if (bad) {
+        f.el.setAttribute('aria-invalid', 'true');
+        box.textContent = T(f.key, f.fb);
+        box.hidden = false;
+        box.__key = f.key; box.__fb = f.fb;
+      } else {
+        f.el.removeAttribute('aria-invalid');
+        box.textContent = ''; box.hidden = true; box.__key = null;
+      }
+    };
+
+    var say = function (key, fallback, state) {
+      statusEl.textContent = key ? T(key, fallback) : '';
+      statusEl.__key = key; statusEl.__fb = fallback;
+      if (state) statusEl.setAttribute('data-state', state);
+      else statusEl.removeAttribute('data-state');
+    };
+
+    // الخطأ يختفي بمجرّد التصحيح، لا عند الإرسال التالي
+    fields.forEach(function (f) {
+      f.el.addEventListener('input', function () {
+        if (f.el.getAttribute('aria-invalid') === 'true' && f.ok(f.el.value.trim())) paint(f, false);
+      });
+    });
+
+    var mailtoFallback = function (data) {
+      var lines = [
+        'الاسم: ' + data.name,
+        'البريد: ' + data.email,
+        data.phone ? 'الجوال: ' + data.phone : '',
+        data.service ? 'الخدمة: ' + data.service : '',
+        '',
+        data.message
+      ].filter(Boolean).join('\n');
+      window.location.href = 'mailto:' + MAIL_TO +
+        '?subject=' + encodeURIComponent('طلب من الموقع — ' + data.name) +
+        '&body=' + encodeURIComponent(lines);
+      say('fMailOpened', 'فتحنا برنامج البريد برسالة معبّأة. وإن لم يفتح شيء، راسلنا على info@ruye.sa أو على واتساب.', 'ok');
+    };
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      // الفخّ ممتلئ = روبوت. نُظهر نجاحًا ولا نرسل شيئًا: إخباره بأنه
+      // كُشف يعلّمه كيف يتفادى الفخّ في المرّة القادمة.
+      if (form.querySelector('#f-company').value) {
+        say('fOk', 'وصلتنا رسالتك، ونردّ عليك خلال يوم عمل.', 'ok');
+        form.reset();
+        return;
+      }
+
+      var firstBad = null;
+      fields.forEach(function (f) {
+        var bad = !f.ok(f.el.value.trim());
+        paint(f, bad);
+        if (bad && !firstBad) firstBad = f.el;
+      });
+      if (firstBad) { say(null, ''); firstBad.focus(); return; }
+
+      var sel = document.getElementById('f-service');
+      var data = {
+        name: document.getElementById('f-name').value.trim(),
+        email: document.getElementById('f-email').value.trim(),
+        phone: document.getElementById('f-phone').value.trim(),
+        service: sel.selectedIndex > 0 ? sel.options[sel.selectedIndex].textContent.trim() : '',
+        message: document.getElementById('f-msg').value.trim()
+      };
+
+      if (!FORM_ENDPOINT) { mailtoFallback(data); return; }
+
+      say('fSending', 'جارٍ الإرسال…');
+      sendBtn.setAttribute('aria-disabled', 'true');
+
+      var payload = {
+        access_key: FORM_KEY,
+        subject: 'طلب من موقع رؤى — ' + data.name,
+        name: data.name, email: data.email,
+        phone: data.phone, service: data.service, message: data.message
+      };
+
+      fetch(FORM_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(payload)
+      }).then(function (r) {
+        if (!r.ok) throw new Error(String(r.status));
+        say('fOk', 'وصلتنا رسالتك، ونردّ عليك خلال يوم عمل.', 'ok');
+        form.reset();
+      }).catch(function () {
+        say('fErrSend', 'تعذّر الإرسال. راسلنا على واتساب أو على info@ruye.sa', 'err');
+      }).then(function () {
+        sendBtn.removeAttribute('aria-disabled');
+      });
+    });
+
+    // عند تبديل اللغة تُعاد كتابة ما هو ظاهر من أخطاء وحالة
+    document.addEventListener('ruye:lang', function () {
+      document.querySelectorAll('.field__err').forEach(function (box) {
+        if (box.__key && !box.hidden) box.textContent = T(box.__key, box.__fb);
+      });
+      if (statusEl.__key) statusEl.textContent = T(statusEl.__key, statusEl.__fb);
+    });
+  }
+
+  /* ---------- 8) سنة الحقوق ---------- */
   var year = document.getElementById('year');
   if (year) year.textContent = new Date().getFullYear();
 })();
