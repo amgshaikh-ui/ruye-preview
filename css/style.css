@@ -1,0 +1,560 @@
+/* =========================================================
+   رؤى لخدمات الأعمال — Stylesheet
+   RTL أولاً · بلا اعتماديات
+   ========================================================= */
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  margin:0;font-family:var(--font);font-weight:400;
+  font-size:var(--fs-body);line-height:var(--lh-body);
+  color:var(--ink-900);background:var(--paper);
+  overflow-x:hidden;
+}
+img,svg{max-width:100%;display:block}
+/* لفّ الصور في <picture> يجب ألّا يغيّر التخطيط: display:contents
+   يلغي صندوق picture فتبقى <img> ابنًا مباشرًا لمكانها الأصلي */
+picture{display:contents}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
+h1,h2,h3,p{margin:0}
+ul{margin:0;padding:0;list-style:none}
+
+:focus-visible{outline:3px solid var(--teal-500);outline-offset:3px;border-radius:4px}
+
+.skip-link{
+  position:absolute;inset-inline-start:-9999px;top:0;z-index:999;
+  /* حبر كحليّ لا أبيض: الأبيض على التركوازي ٢٫٧٨:١ وهو دون حدّ AA
+     (٤٫٥:١ لنصّ ١٦ بكسل)، والكحليّ عليه ٥٫٩٥:١. ويبقى لون الخلفية
+     من الهوية كما هو. */
+  background:var(--teal-500);color:var(--ink-900);padding:.75rem 1.25rem;border-radius:0 0 var(--r-sm) var(--r-sm);
+}
+.skip-link:focus{inset-inline-start:1rem}
+
+.wrap{width:100%;max-width:var(--maxw);margin-inline:auto;padding-inline:var(--gutter)}
+.section{padding-block:var(--section-y);position:relative}
+.section--dark{background:var(--grad-dark);color:var(--paper-2);overflow:hidden}
+.section--paper{background:var(--paper)}
+.section--tint{background:linear-gradient(180deg,#EDF1F4 0%,var(--paper) 100%)}
+
+/* ---------- Shared type blocks ---------- */
+.eyebrow{
+  font-weight:500;font-size:var(--fs-eyebrow);letter-spacing:.02em;
+  color:var(--teal-ink);margin-bottom:1.25rem;display:flex;align-items:center;gap:.7rem;
+}
+.eyebrow::after{content:"";height:1px;width:clamp(28px,5vw,64px);background:currentColor;opacity:.5}
+.section--dark .eyebrow{color:var(--mint-300)}
+
+.h2{font-size:var(--fs-h2);font-weight:700;line-height:var(--lh);letter-spacing:-.01em}
+.lead{font-size:var(--fs-lead);color:var(--muted);line-height:var(--lh-body);max-width:62ch}
+.section--dark .lead{color:var(--muted-dark)}
+.grad-text{
+  background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.rule{height:1px;border:0;background:var(--grad-rule);opacity:.65;margin:0}
+
+/* ---------- Buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;gap:.6rem;
+  padding:.95rem 1.9rem;border-radius:var(--r-pill);border:1px solid transparent;
+  font-weight:500;cursor:pointer;transition:transform .25s var(--ease),background-color .25s,border-color .25s,color .25s,box-shadow .25s;
+}
+.btn:hover{transform:translateY(-2px)}
+.btn--primary{background:var(--teal-500);color:#06241F;box-shadow:0 10px 30px -12px rgba(47,173,153,.8)}
+.btn--primary:hover{background:var(--mint-300)}
+.btn--ghost{border-color:rgba(244,245,242,.35);color:var(--paper-2)}
+.btn--ghost:hover{border-color:var(--mint-300);background:rgba(144,213,191,.1)}
+.btn--dark{background:var(--ink-900);color:var(--paper-2)}
+.btn--dark:hover{background:var(--ink-800)}
+.btn__arrow{transition:transform .25s var(--ease)}
+.btn:hover .btn__arrow{transform:translateX(-4px)}
+
+/* =========================================================
+   Header
+   ========================================================= */
+.header{
+  position:fixed;inset-block-start:0;inset-inline:0;z-index:100;
+  transition:background-color .35s var(--ease),backdrop-filter .35s,box-shadow .35s,padding .35s;
+  padding-block:1.4rem;
+}
+.header.is-stuck{
+  background:rgba(16,31,53,.72);
+  /* سفاري أقل من ١٨ لا يعرف الخاصية بلا بادئة — بدونها يختفي الزجاج على آيفون */
+  -webkit-backdrop-filter:blur(18px) saturate(1.4);
+  backdrop-filter:blur(18px) saturate(1.4);
+  box-shadow:0 1px 0 rgba(144,213,191,.14),0 18px 40px -34px rgba(0,0,0,.9);
+  padding-block:.85rem;
+}
+/* شريط تقدّم القراءة — يظهر بعد مغادرة أعلى الصفحة */
+.progress{
+  position:absolute;inset-block-end:0;inset-inline:0;height:2px;
+  background:var(--grad-rule);transform:scaleX(0);transform-origin:left center;
+  opacity:0;transition:opacity .35s var(--ease);
+}
+[dir="rtl"] .progress{transform-origin:right center}
+.header.is-stuck .progress{opacity:1}
+.header__inner{display:flex;align-items:center;gap:clamp(.75rem,1.6vw,1.5rem)}
+.header__logo{order:1}
+.header__logo img{height:38px;width:auto}
+.nav{order:2;margin-inline-start:auto;display:flex;align-items:center;gap:clamp(1rem,2.2vw,2.1rem)}
+.nav__link{
+  color:var(--paper-2);font-weight:500;font-size:.9375rem;position:relative;padding-block:.35rem;opacity:.85;
+  transition:opacity .25s,color .25s;
+}
+.nav__link::after{
+  content:"";position:absolute;inset-block-end:0;inset-inline-start:0;height:2px;width:0;
+  background:var(--mint-300);transition:width .3s var(--ease);
+}
+.nav__link:hover,.nav__link.is-active{opacity:1;color:var(--mint-300)}
+.nav__link:hover::after,.nav__link.is-active::after{width:100%}
+.header__cta{padding:.6rem 1.35rem;font-size:.9375rem}
+
+.nav-toggle{
+  display:none;order:4;width:46px;height:46px;border:1px solid rgba(244,245,242,.3);
+  background:rgba(16,31,53,.5);border-radius:var(--r-pill);cursor:pointer;align-items:center;justify-content:center;
+  position:relative;z-index:3;
+}
+.nav-toggle span{display:block;width:20px;height:2px;background:var(--paper-2);position:relative;transition:background .2s}
+.nav-toggle span::before,.nav-toggle span::after{
+  content:"";position:absolute;inset-inline-start:0;width:20px;height:2px;background:var(--paper-2);
+  transition:transform .3s var(--ease);
+}
+.nav-toggle span::before{top:-6px}
+.nav-toggle span::after{top:6px}
+.nav-toggle[aria-expanded="true"] span{background:transparent}
+.nav-toggle[aria-expanded="true"] span::before{transform:translateY(6px) rotate(45deg)}
+.nav-toggle[aria-expanded="true"] span::after{transform:translateY(-6px) rotate(-45deg)}
+
+/* ---------- مبدّل اللغة ---------- */
+.lang-toggle{
+  order:3;display:inline-flex;align-items:center;justify-content:center;
+  min-width:46px;height:38px;padding:0 .85rem;
+  border:1px solid rgba(244,245,242,.35);border-radius:var(--r-pill);
+  background:transparent;color:var(--paper-2);
+  font-family:var(--font);font-weight:500;font-size:.875rem;letter-spacing:.04em;line-height:1;
+  cursor:pointer;
+  transition:background-color .25s,border-color .25s,color .25s,transform .25s var(--ease);
+}
+.lang-toggle:hover{
+  border-color:var(--mint-300);color:var(--mint-300);
+  background:rgba(144,213,191,.1);transform:translateY(-2px);
+}
+
+/* =========================================================
+   Hero
+   ========================================================= */
+.hero{
+  position:relative;min-height:100svh;display:flex;align-items:center;
+  /* خلفية الهيرو: صورة الفريق تحت طبقة التدرّج الأزرق (قرار ٢٠٢٦-١١-٠٧).
+     الطبقات من فوق إلى تحت: تدرّج معتم ٨٤–٩٣٪ يضمن قراءة النصّ، ثم الصورة،
+     ثم التدرّج الأصلي احتياطيًّا إن تعذّر تحميل الصورة فلا يظهر بياض.
+     الإعلان مكرّر عمدًا: الأوّل بـJPEG يفهمه كل متصفّح، والثاني يتجاوزه
+     بـimage-set فيقدّم AVIF (٣٣ ك.ب بدل ١٤١) حيث تُدعم — و<picture> لا يصلح
+     هنا لأن الخلفية في CSS لا في وسم صورة.
+     الإطار مرفوع إلى ٢٨٪ لا الوسط: الصورة نفسها تظهر كاملةً في «من نحن»،
+     واختلاف الإطار يمنع أن تبدو الصفحة مكرّرةً لصورتها. */
+  background:
+    linear-gradient(135deg,rgba(16,31,53,.93) 8%,rgba(22,69,107,.84) 91%),
+    url(../assets/img/team.jpg) center 28%/cover no-repeat,
+    var(--grad-dark);
+  background:
+    linear-gradient(135deg,rgba(16,31,53,.93) 8%,rgba(22,69,107,.84) 91%),
+    image-set(url(../assets/img/team.avif) type("image/avif"),
+              url(../assets/img/team.jpg)  type("image/jpeg")) center 28%/cover no-repeat,
+    var(--grad-dark);
+  color:var(--paper-2);overflow:hidden;
+  padding-block:9rem 5rem;
+}
+.hero__mark,.hero__mark-outline{position:absolute;pointer-events:none;user-select:none}
+.hero__mark{
+  bottom:-8%;left:-14%;width:min(70vw,860px);opacity:.38;   /* خُفّفت لتظهر الصورة خلفها */
+  animation:floatY 14s ease-in-out infinite;
+}
+.hero__mark-outline{
+  top:2%;left:-6%;width:min(40vw,500px);opacity:.24;
+}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-18px)}}
+
+.hero__inner{position:relative;z-index:2;width:100%}
+.hero__title{font-size:var(--fs-display);line-height:1.2;font-weight:400;letter-spacing:-.015em}
+.hero__title strong{display:block;font-weight:700;color:var(--mint-300);font-size:1.4em;line-height:1.15}
+.hero__accent{width:68px;height:4px;background:var(--mint-300);border-radius:2px;margin-block:clamp(1.75rem,4vh,2.75rem) 1.5rem}
+.hero__disciplines{font-weight:500;font-size:clamp(1rem,1.5vw,1.25rem);color:var(--paper-2);opacity:.92}
+.hero__actions{display:flex;flex-wrap:wrap;gap:1rem;margin-block-start:clamp(2rem,5vh,3rem)}
+
+.hero__scroll{
+  position:absolute;inset-block-end:2.25rem;inset-inline-start:var(--gutter);z-index:2;
+  display:flex;align-items:center;gap:.65rem;font-size:var(--fs-small);
+  color:var(--mint-300);letter-spacing:.14em;
+}
+.hero__scroll i{display:block;width:1px;height:46px;background:linear-gradient(180deg,var(--mint-300),transparent);animation:scrollCue 2.2s var(--ease) infinite}
+@keyframes scrollCue{0%{transform:scaleY(.2);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}50.1%{transform-origin:bottom}100%{transform:scaleY(.2);transform-origin:bottom}}
+
+/* =========================================================
+   About
+   ========================================================= */
+.about__grid{display:grid;gap:clamp(2.5rem,5vw,4.5rem);grid-template-columns:1fr}
+.about__title{font-size:var(--fs-h2);font-weight:700;line-height:var(--lh);color:var(--ink-900)}
+/* خط «من نحن ؟» العربي المرسوم باليد — عربي فقط، فهو حروف لا زخرفة محايدة */
+.about__lettering{width:94px;margin-block:1.25rem 1.5rem;opacity:.9}
+.about__rule{display:none}
+.about__media{position:relative;border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--shadow-lift)}
+.about__media img{width:100%;height:clamp(260px,42vw,420px);object-fit:cover}
+.about__closing{
+  display:grid;gap:1.75rem;grid-template-columns:1fr;
+  margin-block-start:clamp(2.5rem,5vw,3.5rem);padding-block-start:clamp(2rem,4vw,2.75rem);
+  border-block-start:1px solid rgba(34,118,157,.18);
+}
+.about__closing h3{font-size:var(--fs-h3);font-weight:700;line-height:var(--lh)}
+@media(min-width:900px){
+  .about__closing{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);align-items:start;gap:2.5rem}
+}
+
+/* =========================================================
+   Services
+   ========================================================= */
+.services__head{display:grid;gap:1.5rem;margin-bottom:clamp(2.5rem,5vw,4rem)}
+.services__grid{display:grid;gap:clamp(1rem,1.6vw,1.5rem);grid-template-columns:repeat(3,minmax(0,1fr))}
+.service{
+  position:relative;background:#fff;border-radius:var(--r-lg);padding:clamp(1.75rem,2.4vw,2.25rem);
+  border:1px solid rgba(34,118,157,.12);box-shadow:var(--shadow-soft);
+  transition:transform .35s var(--ease),box-shadow .35s var(--ease),border-color .35s;
+  overflow:hidden;
+}
+.service::before{
+  content:"";position:absolute;inset-block-start:0;inset-inline:0;height:3px;
+  background:var(--grad-rule);transform:scaleX(0);transform-origin:inline-end;transition:transform .45s var(--ease);
+}
+.service:hover{transform:translateY(-6px);box-shadow:var(--shadow-lift);border-color:rgba(47,173,153,.35)}
+.service:hover::before{transform:scaleX(1)}
+/* الرقم: محارة مفرّغة كبيرة في الزاوية الطرفية — تمتلئ عند المرور.
+   ‎-webkit-text-stroke مدعوم في كل المتصفّحات الحديثة، ومع ذلك يبقى
+   احتياطي @supports لأن color:transparent بلا حدّ = رقم غير مرئي. */
+.service__num{
+  position:absolute;inset-block-start:clamp(1rem,1.8vw,1.4rem);inset-inline-end:clamp(1.1rem,2vw,1.6rem);
+  font-size:clamp(2.75rem,5vw,3.5rem);font-weight:800;line-height:1;letter-spacing:.01em;
+  font-feature-settings:"tnum" 1;pointer-events:none;
+  color:transparent;-webkit-text-stroke:1.5px rgba(47,173,153,.32);
+  transition:-webkit-text-stroke-color .45s var(--ease),transform .45s var(--ease);
+}
+@supports not ((-webkit-text-stroke:1px currentColor)){
+  .service__num{color:rgba(47,173,153,.3)}
+}
+.service:hover .service__num{-webkit-text-stroke-color:rgba(47,173,153,.8);transform:translateY(-3px)}
+
+/* الأيقونة: مربّع نعناعي باهت ينقلب إلى التدرّج عند المرور */
+.service__icon{
+  display:grid;place-items:center;inline-size:3.25rem;block-size:3.25rem;
+  border-radius:1.1rem;margin-bottom:1.25rem;
+  background:rgba(47,173,153,.1);color:var(--teal-ink);
+  transition:background .45s var(--ease),color .45s var(--ease),transform .45s var(--ease);
+}
+.service__icon svg{
+  inline-size:1.625rem;block-size:1.625rem;
+  fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;
+}
+.service:hover .service__icon{background:var(--grad-mint);color:#fff;transform:translateY(-3px)}
+
+/* السبرايت وعاءٌ للرموز لا عنصرٌ مرئي */
+.icon-sprite{position:absolute;inline-size:0;block-size:0;overflow:hidden}
+.service__title{font-size:1.25rem;font-weight:700;line-height:1.4;margin-bottom:.75rem;color:var(--ink-900)}
+.service__text{color:var(--muted);font-size:1rem;line-height:1.75}
+
+.services__note{
+  margin-block-start:clamp(2rem,4vw,3rem);padding:clamp(1.5rem,3vw,2.25rem);
+  background:var(--grad-mint);border-radius:var(--r-lg);color:#fff;
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1.25rem;
+  font-size:var(--fs-h3);font-weight:700;
+}
+
+/* =========================================================
+   Impact / metrics
+   ========================================================= */
+.impact__head{display:grid;gap:1.5rem;margin-bottom:clamp(2.5rem,5vw,3.5rem);max-width:760px}
+.impact__title{font-size:var(--fs-h2);font-weight:700;line-height:var(--lh);color:var(--paper-2)}
+.metrics{display:grid;gap:clamp(.9rem,1.4vw,1.25rem);grid-template-columns:repeat(3,minmax(0,1fr))}
+.metric{
+  /* زجاج بالشفافية وحدها: خلفية القسم تدرّج أملس، فتمويهها يكلّف ولا يُرى.
+     التظليل كحلي لا أبيض: التفتيح يرفع الخلفية عند الطرف الفاتح من التدرّج
+     فيهبط تباين الرقم الفيروزي إلى 2.88 — أقل من حد WCAG حتى للنص الكبير.
+     عند .50 يبقى التباين 4.72 في الأسوأ (والبطاقة الصمّاء السابقة كانت 4.86). */
+  background:linear-gradient(180deg,rgba(16,31,53,.58),rgba(16,31,53,.50));
+  border:1px solid rgba(244,245,242,.14);border-radius:var(--r-md);
+  padding:1.75rem 1.5rem;
+  box-shadow:var(--shadow-card),inset 0 1px 0 rgba(255,255,255,.07);
+  transition:transform .35s var(--ease),border-color .35s,background .35s,box-shadow .35s;
+}
+.metric:hover{
+  transform:translateY(-5px);border-color:rgba(47,173,153,.55);
+  background:linear-gradient(180deg,rgba(16,31,53,.52),rgba(16,31,53,.46));
+}
+.metric__value{font-size:clamp(1.9rem,3.2vw,2.5rem);font-weight:700;color:var(--teal-500);line-height:1.25}
+.metric__label{color:var(--paper-2);font-size:1.0625rem;margin-block-start:.5rem;opacity:.9}
+
+.channels{
+  margin-block-start:clamp(2.5rem,5vw,3.5rem);padding-block-start:clamp(1.75rem,3vw,2.5rem);
+  border-block-start:1px solid rgba(144,213,191,.2);
+}
+.channels__title{color:var(--teal-500);font-weight:700;font-size:1.5rem;margin-bottom:1.25rem}
+.channels__list{display:flex;flex-wrap:wrap;gap:.6rem}
+.channels__list li{
+  border:1px solid rgba(144,213,191,.3);border-radius:var(--r-pill);
+  padding:.5rem 1.15rem;font-size:.9375rem;color:var(--paper-2);
+  transition:background-color .25s,border-color .25s,transform .25s var(--ease);
+}
+.channels__list li:hover{background:rgba(144,213,191,.12);border-color:var(--mint-300);transform:translateY(-2px)}
+
+/* =========================================================
+   Tech
+   ========================================================= */
+.tech__grid{display:grid;gap:clamp(2rem,4vw,3.5rem);grid-template-columns:1fr;align-items:center}
+/* مسرح الموك-أب: خلفية بالهوية + إطار متصفّح مرسوم + جهاز واحد بجانبه.
+   المحاذاة flex-end فيتساوى أسفل الجهاز مع أسفل نافذة المتصفّح. */
+.tech__stage{
+  display:flex;align-items:flex-end;gap:clamp(.75rem,2vw,1.5rem);margin:0;
+  padding:clamp(1.1rem,2.6vw,2.25rem);border-radius:var(--r-lg);
+  background:
+    radial-gradient(130% 120% at 88% -10%,rgba(47,173,153,.22) 0%,rgba(47,173,153,0) 58%),
+    linear-gradient(145deg,#EDF2F4 0%,#DEE7ED 100%);
+  border:1px solid rgba(34,118,157,.12);
+}
+.mock-browser{
+  flex:1 1 auto;min-inline-size:0;border-radius:14px;overflow:hidden;background:#fff;
+  box-shadow:var(--shadow-lift);
+}
+.mock-browser__bar{display:flex;align-items:center;gap:.7rem;padding:.55rem .8rem;background:var(--ink-900)}
+.mock-browser__dots{display:flex;gap:.32rem;flex:0 0 auto}
+.mock-browser__dots i{inline-size:8px;block-size:8px;border-radius:50%;background:rgba(244,245,242,.28)}
+.mock-browser__url{flex:1 1 auto;block-size:14px;border-radius:7px;background:rgba(244,245,242,.1)}
+.mock-browser img{display:block;inline-size:100%;block-size:auto}
+
+/* سالب inline-start يسحب الجهاز فوق نافذة المتصفّح — في RTL الحافة
+   البادئة للجهاز هي اليمنى، أي الجهة التي تقف عليها النافذة. */
+.mock-phone{
+  flex:0 0 clamp(104px,24%,188px);position:relative;z-index:1;
+  margin-inline-start:clamp(-3.75rem,-3.2vw,-1.5rem);
+  filter:drop-shadow(0 22px 34px rgba(16,31,53,.34));
+}
+.mock-phone img{display:block;inline-size:100%;block-size:auto}
+
+@media(max-width:560px){
+  .tech__stage{flex-direction:column;align-items:stretch}
+  .mock-phone{align-self:center;flex:0 0 auto;inline-size:min(56%,190px);margin-inline-start:0;margin-block-start:-2rem}
+}
+.tech__copy h3{font-size:var(--fs-h3);font-weight:700;line-height:var(--lh);margin-bottom:1rem}
+@media(min-width:960px){.tech__grid{grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr)}}
+
+/* ---------- Reports ---------- */
+/* اللوحة على اليمين والدليل على اليسار؛ تنهار إلى عمود واحد تحت ٩٦٠ */
+.reports__layout{display:grid;gap:clamp(1.25rem,2.5vw,1.75rem);margin-block-start:clamp(2.5rem,5vw,3.5rem)}
+@media(min-width:960px){.reports__layout{grid-template-columns:minmax(0,1.6fr) minmax(0,.9fr);align-items:start}}
+
+.dash{
+  margin:0;border-radius:var(--r-lg);overflow:hidden;background:var(--grad-dark);
+  border:1px solid rgba(144,213,191,.16);box-shadow:var(--shadow-lift);
+}
+.dash__bar{
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+  padding:.85rem clamp(1rem,2vw,1.5rem);background:rgba(0,0,0,.18);
+  border-block-end:1px solid rgba(244,245,242,.1);
+}
+.dash__title{font-weight:700;color:var(--paper-2);font-size:1.0625rem}
+.dash__tag{
+  font-size:var(--fs-small);color:var(--mint-300);white-space:nowrap;
+  border:1px solid rgba(144,213,191,.35);border-radius:999px;padding:.22rem .7rem;
+}
+.dash__body{padding:clamp(1rem,2vw,1.5rem);display:grid;gap:clamp(.9rem,1.8vw,1.25rem)}
+.dash__kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.6rem}
+.kpi{
+  background:rgba(244,245,242,.055);border:1px solid rgba(244,245,242,.1);
+  border-radius:var(--r-sm);padding:.75rem .85rem;display:grid;gap:.15rem;
+}
+.kpi b{font-size:clamp(1.05rem,1.9vw,1.375rem);font-weight:700;line-height:1.15;color:var(--mint-300)}
+.kpi span{font-size:var(--fs-small);color:var(--muted-dark)}
+
+.dash__panels{display:grid;gap:clamp(.75rem,1.6vw,1.1rem);grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}
+.panel{
+  background:rgba(244,245,242,.045);border:1px solid rgba(244,245,242,.09);
+  border-radius:var(--r-sm);padding:.9rem 1rem;min-inline-size:0;
+}
+.panel__title{font-size:var(--fs-small);font-weight:700;color:var(--muted-dark);margin-bottom:.75rem}
+.panel__chart{display:block;inline-size:100%;block-size:auto}
+/* بلا عكس في RTL رغم اتجاه القراءة: المنحنى بلا محور زمن مكتوب، فالقراءة
+   الوحيدة الممكنة هي شكله. والصعود نحو اليمين لا يُساء فهمه، أمّا عكسه
+   فيبدو هبوطًا لمن لا ينتبه إلى اتجاه القراءة. */
+.panel__list{list-style:none;display:grid;gap:.5rem;margin:0;padding:0}
+.panel__list li{position:relative;padding-inline-start:1.05rem;font-size:.9375rem;line-height:1.5;color:var(--paper-2)}
+.panel__list li::before{
+  content:"";position:absolute;inset-inline-start:0;inset-block-start:.56em;
+  inline-size:6px;block-size:6px;border-radius:50%;background:var(--teal-500);
+}
+
+.reports__proof{display:grid;gap:.75rem;align-content:start}
+.reports__proof-label{font-size:var(--fs-small);color:var(--muted);font-weight:500}
+.proof{
+  display:block;inline-size:100%;padding:0;cursor:zoom-in;background:#fff;
+  border:1px solid rgba(34,118,157,.14);border-radius:var(--r-md);overflow:hidden;
+  box-shadow:var(--shadow-soft);transition:transform .35s var(--ease),box-shadow .35s var(--ease);
+}
+.proof:hover{transform:translateY(-4px);box-shadow:var(--shadow-lift)}
+.proof img{display:block;inline-size:100%;aspect-ratio:16/9;object-fit:cover}
+
+@media(max-width:640px){
+  .dash__kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .dash__panels{grid-template-columns:1fr}
+}
+
+/* =========================================================
+   Work gallery
+   ========================================================= */
+.work__head{display:grid;gap:1.5rem;margin-bottom:clamp(2.5rem,5vw,3.5rem);max-width:760px}
+.work__grid{display:grid;gap:clamp(1rem,1.6vw,1.5rem);grid-template-columns:repeat(3,minmax(0,1fr))}
+.work-card{
+  position:relative;border-radius:var(--r-lg);overflow:hidden;cursor:zoom-in;
+  background:var(--ink-700);border:1px solid var(--ink-600);padding:0;width:100%;text-align:start;
+  transition:transform .4s var(--ease),box-shadow .4s var(--ease),border-color .4s;
+}
+.work-card img{width:100%;aspect-ratio:3/4;object-fit:cover;transition:transform .7s var(--ease);}
+.work-card::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(16,31,53,.92) 0%,rgba(16,31,53,.1) 55%,transparent 100%);
+}
+.work-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lift);border-color:rgba(47,173,153,.5)}
+.work-card:hover img{transform:scale(1.05)}
+.work-card__label{
+  position:absolute;inset-block-end:0;inset-inline:0;z-index:2;
+  padding:1.5rem;color:var(--paper-2);font-weight:700;font-size:1.125rem;line-height:1.5;
+}
+.work-card__label span{display:block;font-weight:400;font-size:.875rem;color:var(--mint-300);margin-block-start:.35rem}
+
+/* ---------- Lightbox ---------- */
+.lightbox{
+  position:fixed;inset:0;z-index:200;display:none;place-items:center;
+  background:rgba(8,16,28,.9);
+  -webkit-backdrop-filter:blur(14px) saturate(1.2);
+  backdrop-filter:blur(14px) saturate(1.2);
+  padding:clamp(1rem,4vw,3rem);
+}
+.lightbox[open],.lightbox.is-open{display:grid}
+.lightbox img{max-width:min(94vw,900px);max-height:88vh;width:auto;border-radius:var(--r-md);box-shadow:var(--shadow-lift)}
+.lightbox__close{
+  position:absolute;inset-block-start:clamp(1rem,3vw,2rem);inset-inline-end:clamp(1rem,3vw,2rem);
+  width:48px;height:48px;border-radius:var(--r-pill);border:1px solid rgba(244,245,242,.3);
+  background:transparent;color:var(--paper-2);font-size:1.4rem;cursor:pointer;line-height:1;
+  transition:background-color .25s,border-color .25s;
+}
+.lightbox__close:hover{background:rgba(244,245,242,.12);border-color:var(--mint-300)}
+
+/* =========================================================
+   Contact
+   ========================================================= */
+.contact{position:relative;overflow:hidden}
+.contact__mark{position:absolute;bottom:-18%;left:-10%;width:min(52vw,580px);opacity:.4;pointer-events:none}
+.contact__inner{position:relative;z-index:2}
+.contact__title{font-size:var(--fs-display);font-weight:400;line-height:1.2;color:var(--paper-2)}
+.contact__title strong{display:block;font-weight:700;color:var(--teal-500);font-size:1.25em;line-height:1.15}
+.contact__sub{font-size:var(--fs-lead);color:var(--paper-2);margin-block-start:1.25rem;opacity:.9}
+.contact__details{
+  display:grid;gap:clamp(1.5rem,3vw,2.5rem);grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));
+  margin-block-start:clamp(2.5rem,5vw,3.5rem);padding-block-start:clamp(2rem,4vw,3rem);
+  border-block-start:1px solid rgba(144,213,191,.22);
+}
+.contact__label{color:var(--mint-300);font-weight:500;font-size:1.0625rem;margin-bottom:.9rem}
+.contact__value{
+  display:inline-flex;align-items:center;gap:.9rem;color:var(--paper-2);
+  font-size:clamp(1.3rem,2.6vw,2rem);font-weight:500;transition:color .25s,transform .25s var(--ease);
+}
+.contact__value:hover{color:var(--mint-300);transform:translateX(-4px)}
+.contact__value img{width:clamp(26px,3vw,34px);height:auto;flex:none}
+.contact__actions{display:flex;flex-wrap:wrap;gap:1rem;margin-block-start:clamp(2.5rem,5vw,3.5rem)}
+
+/* =========================================================
+   Footer
+   ========================================================= */
+.footer{background:var(--ink-900);color:var(--paper-2);padding-block:2.5rem}
+.footer__inner{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1.25rem}
+.footer img{height:34px;width:auto;opacity:.95}
+.footer__note{font-size:var(--fs-small);color:var(--mint-300);opacity:.8}
+
+/* =========================================================
+   LTR (الإنجليزية) — ما لا تقلبه الخصائص المنطقية
+   ========================================================= */
+[dir="ltr"] .hero__mark{left:auto;right:-14%}
+[dir="ltr"] .hero__mark-outline{left:auto;right:-6%}
+[dir="ltr"] .contact__mark{left:auto;right:-10%}
+[dir="ltr"] .btn:hover .btn__arrow{transform:translateX(4px)}
+/* الإنجليزية: أخفِ الحروف العربية وضع خطًا متدرجًا بنفس المقاس والهوامش */
+[dir="ltr"] .about__lettering{display:none}
+[dir="ltr"] .about__rule{display:block;width:94px;height:3px;border-radius:2px;background:var(--grad-rule);margin-block:1.25rem 1.5rem;opacity:.9}
+[dir="ltr"] .contact__value:hover{transform:translateX(4px)}
+
+/* =========================================================
+   Reveal on scroll
+   ========================================================= */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.is-in{opacity:1;transform:none}
+.reveal[data-delay="1"]{transition-delay:.08s}
+.reveal[data-delay="2"]{transition-delay:.16s}
+.reveal[data-delay="3"]{transition-delay:.24s}
+.reveal[data-delay="4"]{transition-delay:.32s}
+.reveal[data-delay="5"]{transition-delay:.4s}
+
+/* ---------- كشف العناوين كلمةً كلمة ---------- */
+/* كلمات لا حروف: التقطيع الحرفي يكسر وصل الحروف العربية */
+.is-split .w{
+  display:inline-block;opacity:0;transform:translateY(.55em);
+  transition:opacity .62s var(--ease),transform .62s var(--ease);
+  transition-delay:calc(var(--i,0) * 55ms);
+}
+.is-split.is-in .w{opacity:1;transform:none}
+/* عند تبديل اللغة تُعاد الكلمات فورًا بلا إعادة تشغيل الحركة */
+.is-split.is-instant .w{transition:none}
+/* العنوان لا يتحرك ككتلة حين تتحرك كلماته */
+.reveal.is-split{opacity:1;transform:none}
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+@media(max-width:1080px){
+  .services__grid,.metrics,.work__grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+@media(max-width:600px){
+  .services__grid,.metrics,.work__grid{grid-template-columns:1fr}
+}
+
+@media(max-width:860px){
+  .nav-toggle{display:inline-flex}
+  .nav{
+    position:fixed;inset-block-start:0;inset-inline-end:0;height:100svh;width:min(82vw,340px);
+    flex-direction:column;align-items:flex-start;justify-content:center;gap:1.75rem;
+    background:rgba(16,31,53,.82);
+    -webkit-backdrop-filter:blur(22px) saturate(1.3);
+    backdrop-filter:blur(22px) saturate(1.3);
+    border-inline-start:1px solid rgba(244,245,242,.12);
+    padding:var(--gutter);
+    transform:translateX(100%);transition:transform .4s var(--ease);
+    box-shadow:-20px 0 60px -30px rgba(0,0,0,.8);margin-inline-start:0;
+  }
+  .lang-toggle{margin-inline-start:auto}
+  [dir="rtl"] .nav{transform:translateX(-100%)}
+  .nav.is-open{transform:translateX(0)}
+  .nav__link{font-size:1.25rem}
+  .header__cta{display:none}
+  .nav .header__cta{display:inline-flex;margin-block-start:1rem}
+  .hero{min-height:auto;padding-block:8rem 4.5rem}
+  .hero__scroll{display:none}
+}
+
+@media(max-width:600px){
+  .hero__title strong{font-size:1.22em}
+  .contact__title strong{font-size:1.12em}
+  .services__note{flex-direction:column;align-items:flex-start;font-size:1.35rem}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+  html{scroll-behavior:auto}
+  .reveal{opacity:1;transform:none}
+  .is-split .w{opacity:1;transform:none}
+}

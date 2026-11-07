@@ -1,0 +1,84 @@
+/* =========================================================
+   رؤى لخدمات الأعمال — Design tokens
+   مستخرجة من الملف التعريفي في Figma (Ruye — إعادة التصميم)
+   ========================================================= */
+
+/* ---------- Tajawal (self-hosted) ---------- */
+@font-face{font-family:Tajawal;font-style:normal;font-weight:400;font-display:swap;
+  src:url(../assets/fonts/tajawal-400-arabic.woff2) format('woff2');
+  unicode-range:U+0600-06FF,U+0750-077F,U+0870-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC;}
+@font-face{font-family:Tajawal;font-style:normal;font-weight:400;font-display:swap;
+  src:url(../assets/fonts/tajawal-400-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+@font-face{font-family:Tajawal;font-style:normal;font-weight:500;font-display:swap;
+  src:url(../assets/fonts/tajawal-500-arabic.woff2) format('woff2');
+  unicode-range:U+0600-06FF,U+0750-077F,U+0870-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC;}
+@font-face{font-family:Tajawal;font-style:normal;font-weight:500;font-display:swap;
+  src:url(../assets/fonts/tajawal-500-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+@font-face{font-family:Tajawal;font-style:normal;font-weight:700;font-display:swap;
+  src:url(../assets/fonts/tajawal-700-arabic.woff2) format('woff2');
+  unicode-range:U+0600-06FF,U+0750-077F,U+0870-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC;}
+@font-face{font-family:Tajawal;font-style:normal;font-weight:700;font-display:swap;
+  src:url(../assets/fonts/tajawal-700-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+
+:root{
+  /* ---------- Brand colour ---------- */
+  --ink-900:#101F35;   /* كحلي عميق — خلفية الأقسام الداكنة */
+  --ink-800:#16456B;   /* كحلي أزرق — نهاية التدرّج */
+  --ink-700:#1B3045;   /* سطح البطاقات على الداكن */
+  --ink-600:#24415F;   /* حدود ناعمة على الداكن */
+
+  --mint-300:#90D5BF;  /* نعناعي — العناوين الفرعية على الداكن */
+  --teal-500:#2FAD99;  /* فيروزي رئيسي */
+  --teal-600:#35B195;
+  --teal-700:#238D86;  /* فيروزي داكن — عناصر كبيرة على الفاتح */
+  --teal-ink:#1A7067;  /* نسخة معتمة للنصوص الصغيرة على الفاتح (WCAG AA) */
+  --teal-800:#087B71;
+  --aqua-500:#31A597;
+  --blue-500:#22769E;
+
+  --paper:#F3F5F7;     /* خلفية الأقسام الفاتحة */
+  --paper-2:#F4F5F2;   /* نص فاتح على الداكن */
+  --muted:#61716E;     /* نص ثانوي على الفاتح */
+  --muted-dark:#B9C8CD;/* نص ثانوي على الداكن */
+
+  /* ---------- Gradients ---------- */
+  --grad-dark:linear-gradient(135deg,#101F35 8.58%,#16456B 91.42%);
+  --grad-rule:linear-gradient(90deg,#22769D 0%,#087B71 50%,#31A597 100%);
+  --grad-text:linear-gradient(to left,#22769E 25.73%,#35B195 100%);
+  --grad-mint:linear-gradient(135deg,#2FAD99 0%,#22769E 100%);
+
+  /* ---------- Type ---------- */
+  --font:'Tajawal',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --lh:1.35;
+  --lh-body:1.8;
+
+  --fs-display:clamp(2.75rem,7.2vw,5rem);   /* عنوان الهيرو */
+  --fs-h2:clamp(2rem,4.4vw,3.25rem);
+  --fs-h3:clamp(1.3rem,2.1vw,1.875rem);
+  --fs-lead:clamp(1.05rem,1.6vw,1.4375rem);
+  --fs-body:clamp(1rem,1.2vw,1.125rem);
+  --fs-eyebrow:0.9375rem;
+  --fs-small:0.8125rem;
+
+  /* ---------- Space & shape ---------- */
+  --gutter:clamp(1.25rem,5vw,4.5rem);
+  --section-y:clamp(4.5rem,9vw,8.5rem);
+  --maxw:1240px;
+
+  --r-sm:12px;
+  --r-md:20px;
+  --r-lg:28px;
+  --r-xl:40px;
+  --r-pill:999px;
+
+  --shadow-card:0 4px 4px rgba(0,0,0,.25);
+  --shadow-soft:0 18px 40px -24px rgba(16,31,53,.45);
+  --shadow-lift:0 28px 60px -28px rgba(16,31,53,.55);
+
+  /* ---------- Motion ---------- */
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --dur:.6s;
+}
